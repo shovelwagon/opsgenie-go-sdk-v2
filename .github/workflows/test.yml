@@ -1,9 +1,9 @@
 name: test
 on:
   push:
-    branches: [ master ]
+    branches: [ test-codecov ]
   pull_request:
-    branches: [ master ]
+    branches: [ test-codecov ]
 jobs:
   ci-test:
     runs-on: ${{ matrix.os }}
@@ -20,8 +20,9 @@ jobs:
           go-version: ${{ matrix.go }}
       - name: Run tests
         run: go test -v -coverprofile=covprofile ./...
-      - name: Send coverage
-        if: ${{ matrix.os == 'macos-latest' && matrix.go == '1.14'}}
-        uses: shogo82148/actions-goveralls@v1.4.2
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
         with:
-          path-to-profile: covprofile
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: shovelwagon/opsgenie-go-sdk-v2
+          file: covprofile
